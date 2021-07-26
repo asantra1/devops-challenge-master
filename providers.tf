@@ -25,7 +25,7 @@ terraform {
     region = "eu-west-2"
 
     dynamodb_table = "asantra1-running-locks"
-    encrypt = true
+    encrypt        = true
   }
 }
 

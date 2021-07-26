@@ -85,17 +85,74 @@ resource "aws_iam_policy" "load-balancer-policy" {
   
 }
 
-module "alb_ingress_controller" {
-  source  = "iplabs/alb-ingress-controller/kubernetes"
-  version = "3.1.0"
-
-  providers = {
-    kubernetes = kubernetes.eks
-  }
-
-  k8s_cluster_type = "eks"
-  k8s_namespace    = "kube-system"
-
-  aws_region_name  = "eu-west-2"
-  k8s_cluster_name = data.aws_eks_cluster.eks_cluster.name
+output "iam_policy_arn" {
+  value = aws_iam_policy.load-balancer-policy.arn
 }
+
+output "oidc_provider" {
+  value = split("oidc-provider/", "${aws_iam_openid_connect_provider.cluster.arn}")[1]
+}
+
+resource "aws_iam_role" "role" {
+  name = "AmazonEKSLoadBalancerControllerRole"
+
+  assume_role_policy = <<EOF
+{
+ "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "${aws_iam_openid_connect_provider.cluster.arn}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${output.oidc_provider.value}:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+        }
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy_attachment" "sa-attach" {
+  name       = "sa-attachment"
+  roles      = [aws_iam_role.role.name]
+  policy_arn = aws_iam_policy.load-balancer-policy.arn
+}
+
+resource "kubernetes_service_account" "aws-load-balancer-controller" {
+  metadata {
+    name = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    labels = {
+        "app.kubernetes.io/component" = "controller"
+        "app.kubernetes.io/name": "aws-load-balancer-controller"
+    }
+    annotations = {
+        "eks.amazonaws.com/role-arn" = "${aws_iam_role.role.arn}"
+    }
+  }
+}
+
+resource "aws_iam_policy" "addn-load-balancer-policy" {
+  name        = "AWSLoadBalancerControllerAdditionalIAMPolicy"
+  description = "AWS LoadBalancer Controller IAM Policy"
+  policy = "${file("iam_policy_v1_to_v2_additional.json")}"
+
+
+resource "aws_iam_policy_attachment" "addn-attach" {
+  name       = "addn-attachment"
+  roles      = [aws_iam_role.role.name]
+  policy_arn = aws_iam_policy.addn-load-balancer-policy.arn
+}
+
+
+
+
+
+
+
+
