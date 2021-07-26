@@ -27,3 +27,4 @@ Please consider the following:
 1. Backend config - var is not allowed - need to pass as command line parameters 
 2. Create the s3 bucket first - maybe through code and separate terraform
 3. remove the hard coded values 
+4. Create namepsace using kubectl
