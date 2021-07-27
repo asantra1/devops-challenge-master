@@ -25,11 +25,10 @@ Please consider the following:
 
 The overall project has been divided into 3 sub projects which are mentioned below.
 1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessible by admin to create the terraform state remote back end configuration single time.
-2. the root folder contains the terraform code to 
-   - Provision EKS cluster using node
-   - 
-//TODO Please update here on how to create the s3 bucket, dynamo db for terraform state and any requirements for running the terraform code.
-1. Backend config - var is not allowed - need to pass as command line parameters 
-2. Create the s3 bucket first - maybe through code and separate terraform
-3. remove the hard coded values 
-4. Create namepsace using kubectl
+2. The root folder contains the terraform code to 
+   - Provision EKS cluster using node gropus
+   - The helm charts of the 2048 application
+   - kustomization.tf file to deploy AWS LB Controller and creation of application namespace game-2048 for developer to deploy the application code
+3. application folder contains terraform code to deploy the application helm charts, but it is optional as generally application deployment CI/CD pipeline (such as Jnekins, AWS CodeDeploy) does this diffrent tools such as helm. 
+
+
