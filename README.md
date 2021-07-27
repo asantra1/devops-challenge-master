@@ -24,14 +24,14 @@ Please consider the following:
 ## Deploying
 
 The overall project has been divided into 3 sub projects which are mentioned below.
-1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessible by admin to create the terraform state remote back end configuration single time.
+1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessed by Admins only to create the terraform state remote backend configuration onetime.
 2. The root folder contains the terraform code to 
-   - Provision EKS cluster using node gropus
-   - The helm charts of the 2048 application
-   - kustomization.tf file to deploy AWS LB Controller and creation of application namespace game-2048 for developer to deploy the application code
-3. application folder contains terraform code to deploy the application helm charts, but it is optional as generally application deployment CI/CD pipeline (such as Jnekins, AWS CodeDeploy) does this diffrent tools such as helm. 
+   - Provision EKS cluster using node groups.
+   - The helm charts of the 2048 application.
+   - kustomization.tf file to deploy AWS Load Balancer Controller and create application namespace game-2048 where the application code will be deployed.
+3. The folder named "application" contains terraform code to deploy the application helm charts, but it is optional as generally the application deployment CI/CD pipeline (such as Jnekins, AWS CodeDeploy) is used to do this. 
 
-### Deployment pre-requisite
+### Deployment prerequisite
 - an AWS account with the IAM permissions listed on the [EKS module documentation](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/iam-permissions.md)
 - a configured AWS CLI
 - AWS IAM Authenticator
@@ -41,21 +41,21 @@ The overall project has been divided into 3 sub projects which are mentioned bel
 - Git
 
 ### Deployment steps
-For the sake of simplicity, no CI/CD tools have been used here. terraform automation scripts needs to be run on a bastion host or local machine
+For the sake of simplicity, no CI/CD pipeline is built here. The automation scripts written using terraform needs to be run on a bastion host or a local machine.
 
-1. s3 bucket, dynamo db creation - Clone the repositoty and go to repository root folder.
+1. AWS S3 bucket, DynamoDB creation - Clone the GitHub repository and go to the root folder.
 ```
 cd tf-bootstrap
 terraform init
 terraform apply 
 ```
-2. Create EKS - Come back to root folder **devops-challenge-master**
+2. Create EKS - On root folder (**devops-challenge-master**)
 ```
 terraform init
 terraform apply 
 ```
-The above will provison the EKS cluster, deploy AWS Load Balancer Controller and create the application namespace game-2048
-Next update the kubectl on 
+The above script will provision an EKS cluster, deploy an AWS Load Balancer Controller to EKS and also create an application namespace game-2048 to EKS.
+Next update the kubectl to execute commands on the EKS cluster.
 ```
 aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
 ```
@@ -64,15 +64,15 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 ```
 helm install app-2048 ./charts/ -n game-2048
 ```
-> **Note** : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline.
+> **Note** : Note : Since this is an application, it is kept outside of the infrastructure automation code. In actual cases, it is deployed through the deployment pipeline.
 
-Optionally the applciation can be deployed using terraform
+Optionally the 2048 application can be deployed using terraform.
 ```
 cd application
 terraform init
 terraform apply
 ```
-> After deployment, application can be accessible through the public facing AWS ALB endpoint. Get this from the ingress resource or from AWS.
+> After deployment, application can be accessible through the public facing AWS ALB endpoint. Get this from the ingress resource or from the AWS.
 
 ### Deployment destroy
 1. Uninstall the 2048 application from EKS (from **devops-challenge-master**)
@@ -88,7 +88,7 @@ terraform destroy
 ```
 terraform destroy
 ```
-3. Destory the S3 and DynamoDB created for keeping terraform state
+3. Destroy the S3 and DynamoDB created for keeping terraform state
 ```
 cd tf-bootstrap
 terraform destroy
