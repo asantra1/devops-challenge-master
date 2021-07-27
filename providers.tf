@@ -17,6 +17,10 @@ terraform {
       source  = "kbst/kustomization"
       version = "0.5.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 3.1.0"
+    }
   }
 
   backend "s3" {
@@ -34,7 +38,13 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
+  host                   = data.aws_eks_cluster.eks_cluster.endpoint
   token                  = data.aws_eks_cluster_auth.cluster.token
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks_cluster.certificate_authority.0.data)
+}
+
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
 }

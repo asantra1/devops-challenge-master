@@ -8,7 +8,7 @@ resource "random_string" "suffix" {
   special = false
 }
 
-data "aws_eks_cluster" "cluster" {
+data "aws_eks_cluster" "eks_cluster" {
   name = module.eks.cluster_id
 }
 
@@ -37,13 +37,15 @@ module "eks" {
     disk_size = 50
   }
 
+  # Try to emulate the actual infratructure where the node-group-2 has taints 
+  # to deploy for test environment.
   node_groups = {
-    node-group-1 = {
-      desired_capacity = 1
-      max_capacity     = 2
-      min_capacity     = 1
+    node_group_1 = {
+      desired_capacity = var.node_group_1_desired_capacity
+      max_capacity     = var.node_group_1_max_capacity
+      min_capacity     = var.node_group_1_min_capacity
 
-      instance_types = ["t2.medium"]
+      instance_types = var.node_group_1_instance_types
       k8s_labels = {
         Environment = "Dev"
       }
@@ -51,12 +53,12 @@ module "eks" {
         ExtraTag = "example"
       }
     }
-    node-group-2 = {
-      desired_capacity = 1
-      max_capacity     = 2
-      min_capacity     = 1
+    node_group_2 = {
+      desired_capacity = var.node_group_2_desired_capacity
+      max_capacity     = var.node_group_2_max_capacity
+      min_capacity     = var.node_group_2_min_capacity
 
-      instance_types = ["t2.small"]
+      instance_types = var.node_group_2_instance_types
       k8s_labels = {
         Environment = "Test"
       }
@@ -73,9 +75,5 @@ module "eks" {
     }
   }
 }
-
-# Deploy an AWS Load Balancer Controller to the EKS cluster 
-# Lablabs terraform-aws-eks-alb-ingress is used here
-
 
 
