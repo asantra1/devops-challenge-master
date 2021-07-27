@@ -31,4 +31,36 @@ The overall project has been divided into 3 sub projects which are mentioned bel
    - kustomization.tf file to deploy AWS LB Controller and creation of application namespace game-2048 for developer to deploy the application code
 3. application folder contains terraform code to deploy the application helm charts, but it is optional as generally application deployment CI/CD pipeline (such as Jnekins, AWS CodeDeploy) does this diffrent tools such as helm. 
 
+### Deployment pre-requisite
+- an AWS account with the IAM permissions listed on the [EKS module documentation](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/iam-permissions.md)
+- a configured AWS CLI
+- AWS IAM Authenticator
+- kubectl
+- Helm3
+- Terraform
+- Git
 
+### Deployment steps
+For the sake of simplicity, no CI/CD tools have been used here. terraform automation scripts needs to be run on a bastion host or local machine
+
+1. s3 bucket, dynamo db creation - Clone the repositoty and go to repository root folder.
+```
+cd tf-bootstrap
+terraform init
+terraform apply 
+```
+2. Create EKS - Come back to root folder *devops-challenge-master*
+```
+terraform init
+terraform apply 
+```
+The above will provison the EKS cluster, deploy AWS Load Balancer Controller and create the application namespace game-2048
+Next update the kubectl on 
+```
+aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
+```
+
+3. Deploy the 2048 application to EKS (stay on to the root folder *devops-challenge-master*)
+```
+
+```
