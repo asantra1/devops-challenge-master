@@ -24,7 +24,7 @@ Please consider the following:
 ## Deploying
 
 The overall project has been divided into 3 sub projects which are mentioned below.
-1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessed by Admins only to create the terraform state remote backend configuration onetime.
+1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessed by Admins only to create the terraform state remote backend configuration one time.
 2. The root folder contains the terraform code to 
    - Provision EKS cluster using node groups.
    - The helm charts of the 2048 application.
@@ -41,7 +41,7 @@ The overall project has been divided into 3 sub projects which are mentioned bel
 - Git
 
 ### Deployment steps
-For the sake of simplicity, no CI/CD pipeline is built here. The automation scripts written using terraform needs to be run on a bastion host or a local machine.
+For the sake of simplicity, no CI/CD pipeline is built here. The automation scripts written using terraform need to be run on a bastion host or a local machine.
 
 1. AWS S3 bucket, DynamoDB creation - Clone the GitHub repository and go to the root folder.
 ```
@@ -72,7 +72,7 @@ cd application
 terraform init
 terraform apply
 ```
-> After deployment, application can be accessible through the public facing AWS ALB endpoint. Get this from the ingress resource or from the AWS.
+> After deployment, applications can be accessible through the public facing AWS ALB endpoint. Get this from the ingress resource or from the AWS.
 
 ### Deployment destroy
 1. Uninstall the 2048 application from EKS (from **devops-challenge-master**)
