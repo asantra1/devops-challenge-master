@@ -23,6 +23,11 @@ Please consider the following:
 
 ## Deploying
 
+The overall project has been divided into 3 sub projects which are mentioned below.
+1. tf-bootstrap folder contains the terraform code to create the s3 bucket, dynamo db for terraform state. This project maintains the terraform state locally and should be accessible by admin to create the terraform state remote back end configuration single time.
+2. the root folder contains the terraform code to 
+   - Provision EKS cluster using node
+   - 
 //TODO Please update here on how to create the s3 bucket, dynamo db for terraform state and any requirements for running the terraform code.
 1. Backend config - var is not allowed - need to pass as command line parameters 
 2. Create the s3 bucket first - maybe through code and separate terraform
