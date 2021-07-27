@@ -49,7 +49,7 @@ cd tf-bootstrap
 terraform init
 terraform apply 
 ```
-2. Create EKS - Come back to root folder *devops-challenge-master*
+2. Create EKS - Come back to root folder **devops-challenge-master**
 ```
 terraform init
 terraform apply 
@@ -64,5 +64,32 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 ```
 helm install app-2048 ./charts/ -n game-2048
 ```
-Note : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline for exaple Jenkins.
+> **Note** : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline for exaple Jenkins.
 
+Optionally the applciation can be deployed using terraform
+```
+cd application
+terraform init
+terraform apply
+```
+> After deployment, application can be accessible through the public facing AWS ALB endpoint. Get this from the ingress resource or from AWS.
+
+### Deployment destroy
+1. Uninstall the 2048 application from EKS (from **devops-challenge-master**)
+```
+helm uninstall app-2048 -n game-2048
+```
+or ( if deployed using terraform)
+```
+cd application
+terraform destroy
+```
+2. Destroy the EKS  (from **devops-challenge-master**)
+```
+terraform destroy
+```
+3. Destory the S3 and DynamoDB created for keeping terraform state
+```
+cd tf-bootstrap
+terraform destroy
+```
