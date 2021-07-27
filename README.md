@@ -64,7 +64,7 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 ```
 helm install app-2048 ./charts/ -n game-2048
 ```
-> **Note** : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline for exaple Jenkins.
+> **Note** : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline.
 
 Optionally the applciation can be deployed using terraform
 ```
