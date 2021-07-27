@@ -60,7 +60,9 @@ Next update the kubectl on
 aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
 ```
 
-3. Deploy the 2048 application to EKS (stay on to the root folder *devops-challenge-master*)
+3. Deploy the 2048 application to EKS (stay on to the root folder *devops-challenge-master*). 
 ```
+helm install app-2048 ./charts/ -n game-2048
+```
+Note : Since this is an application, it is kept outside from the infratructure automation code. In actual case, it is deployed through deployment pipeline for exaple Jenkins.
 
-```
